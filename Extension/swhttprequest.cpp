@@ -376,7 +376,10 @@ static cell_t sm_GetHTTPResponseHeaderSize(IPluginContext *pContext, const cell_
 	
 	cell_t *pSize;
 	pContext->LocalToPhysAddr(params[3], &pSize);
-	return pHTTP->GetHTTPResponseHeaderSize(pRequest->request, pName, reinterpret_cast<uint32_t *>(pSize)) ? 1 : 0;
+	uint32_t size = 0;
+	bool result = pHTTP->GetHTTPResponseHeaderSize(pRequest->request, pName, &size);
+	*pSize = static_cast<cell_t>(size);
+	return result ? 1 : 0;
 }
 
 static cell_t sm_GetHTTPResponseHeaderValue(IPluginContext *pContext, const cell_t *params)
@@ -407,7 +410,10 @@ static cell_t sm_GetHTTPResponseBodySize(IPluginContext *pContext, const cell_t 
 
 	cell_t *pSize;
 	pContext->LocalToPhysAddr(params[2], &pSize);
-	return pHTTP->GetHTTPResponseBodySize(pRequest->request, reinterpret_cast<uint32_t *>(pSize)) ? 1 : 0;
+	uint32_t size = 0;
+	bool result = pHTTP->GetHTTPResponseBodySize(pRequest->request, &size);
+	*pSize = static_cast<cell_t>(size);
+	return result ? 1 : 0;
 }
 
 static cell_t sm_GetHTTPResponseBodyData(IPluginContext *pContext, const cell_t *params)
@@ -668,8 +674,11 @@ static cell_t sm_GetHTTPRequestWasTimedOut(IPluginContext *pContext, const cell_
 
 	cell_t *pData;
 	pContext->LocalToPhysAddr(params[2], &pData);
-
-	return pHTTP->GetHTTPRequestWasTimedOut(pRequest->request, reinterpret_cast<bool *>(pData)) ? 1 : 0;
+	
+	bool timedOut = false;
+	bool result = pHTTP->GetHTTPRequestWasTimedOut(pRequest->request, &timedOut);
+	*pData = timedOut ? 1 : 0;
+	return result ? 1 : 0;
 }
 
 static sp_nativeinfo_t httpnatives[] = {
