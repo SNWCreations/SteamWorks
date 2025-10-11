@@ -4,6 +4,7 @@
 #define _GNU_SOURCE
 #include <dlfcn.h>
 #include <string.h>
+#include <stdint.h>
 
 #define REG_EAX			0
 #define REG_ECX			1
@@ -29,7 +30,7 @@ void check_thunks(unsigned char *dest, unsigned char *pc)
 	/* Step write address back 4 to the start of the function address */
 	unsigned char *writeaddr = dest - 4;
 	unsigned char *calloffset = *(unsigned char **)writeaddr;
-	unsigned char *calladdr = (unsigned char *)(dest + (unsigned int)calloffset);
+	unsigned char *calladdr = (unsigned char *)(dest + (uintptr_t)calloffset);
 
 	/* Lookup name of function being called */
 	if ((*calladdr == 0x8B) && (*(calladdr+2) == 0x24) && (*(calladdr+3) == 0xC3))

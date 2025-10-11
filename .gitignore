@@ -26,3 +26,12 @@
 [Rr]elease - */
 [Dd]ebug/
 [Rr]elease/
+
+# Build directories and dependencies
+objdir/
+Extension/
+hl2sdk-*/
+mmsource-*/
+sourcemod-*/
+steamworks-sdk/
+*.zip

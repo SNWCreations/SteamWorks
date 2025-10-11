@@ -54,7 +54,7 @@ class SteamWorksConfig(object):
     if builder.options.target:
         builder.cxx = builder.DetectCxx(target_arch = builder.options.target)
     else:
-        builder.cxx = builder.DetectCxx(target_arch = 'x86')
+        builder.cxx = builder.DetectCxx(target_arch = 'x86_64')
 
   @property
   def tag(self):
@@ -153,11 +153,12 @@ class SteamWorksConfig(object):
         '-Wno-format',
         '-Wno-format-security',
         '-Wno-array-bounds',
+        '-Wno-maybe-uninitialized',
         '-msse',
-        '-m32',
+        '-fPIC',
       ]
       cxx.cxxflags += [
-          '-std=c++11',
+          '-std=c++14',
       ]
 
       have_gcc = cxx.vendor == 'gcc'
@@ -171,6 +172,8 @@ class SteamWorksConfig(object):
           cxx.cxxflags += ['-Wno-delete-non-virtual-dtor']
         if have_gcc and cxx.version >= '4.8':
           cxx.cflags += ['-Wno-unused-result']
+        if have_gcc and cxx.version >= '6':
+          cxx.cxxflags += ['-Wno-maybe-uninitialized']
       if have_clang:
         cxx.cxxflags += ['-Wno-implicit-exception-spec-mismatch']
         if (cxx.target.platform == 'mac' and cxx.version >= '5.1') or cxx.version >= '3.4':
@@ -179,12 +182,12 @@ class SteamWorksConfig(object):
           cxx.cxxflags += ['-Wno-deprecated']
         cxx.cflags += ['-Wno-sometimes-uninitialized']
 
-      cxx.linkflags += ['-m32']
       cxx.cxxflags += [
         '-fno-exceptions',
         '-fno-threadsafe-statics',
         '-Wno-non-virtual-dtor',
         '-Wno-overloaded-virtual',
+        '-Wno-delete-non-virtual-dtor',
       ]
 
       if have_gcc:
@@ -210,7 +213,7 @@ class SteamWorksConfig(object):
         '/TP',
       ]
       cxx.linkflags += [
-        '/MACHINE:X86',
+        '/MACHINE:X64',
         '/SUBSYSTEM:WINDOWS',
         'kernel32.lib',
         'user32.lib',
@@ -260,7 +263,7 @@ class SteamWorksConfig(object):
       cxx.cflags += ['-mmacosx-version-min=10.5']
       cxx.linkflags += [
         '-mmacosx-version-min=10.5',
-        '-arch', 'i386',
+        '-arch', 'x86_64',
         '-static',
         '-stdlib=libc++'
       ]
@@ -275,6 +278,9 @@ class SteamWorksConfig(object):
       os.path.join(self.sm_root, 'public'),
       os.path.join(self.sm_root, 'public', 'extensions'),
       os.path.join(self.sm_root, 'public', 'sourcepawn'),
+      os.path.join(self.sm_root, 'public', 'amtl', 'amtl'),
+      os.path.join(self.sm_root, 'public', 'amtl'),
+      os.path.join(self.sm_root, 'sourcepawn', 'include'),
     ]
     return compiler
 	
