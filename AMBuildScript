@@ -157,6 +157,8 @@ class SteamWorksConfig(object):
         '-msse',
         '-fPIC',
       ]
+      if cxx.target.arch == 'x86':
+        cxx.cflags += ['-m32']
       cxx.cxxflags += [
           '-std=c++14',
       ]
@@ -190,6 +192,9 @@ class SteamWorksConfig(object):
         '-Wno-delete-non-virtual-dtor',
       ]
 
+      if cxx.target.arch == 'x86':
+        cxx.linkflags += ['-m32']
+
       if have_gcc:
         cxx.cflags += ['-mfpmath=sse']
     elif cxx.vendor == 'msvc':
@@ -213,7 +218,7 @@ class SteamWorksConfig(object):
         '/TP',
       ]
       cxx.linkflags += [
-        '/MACHINE:X64',
+        '/MACHINE:X64' if cxx.target.arch == 'x86_64' else '/MACHINE:X86',
         '/SUBSYSTEM:WINDOWS',
         'kernel32.lib',
         'user32.lib',
@@ -263,7 +268,7 @@ class SteamWorksConfig(object):
       cxx.cflags += ['-mmacosx-version-min=10.5']
       cxx.linkflags += [
         '-mmacosx-version-min=10.5',
-        '-arch', 'x86_64',
+        '-arch', 'x86_64' if cxx.target.arch == 'x86_64' else 'i386',
         '-static',
         '-stdlib=libc++'
       ]
@@ -301,7 +306,11 @@ class SteamWorksConfig(object):
     compiler.defines += defines
 
     if compiler.like('msvc'):
-      compiler.defines += ['COMPILER_MSVC', 'COMPILER_MSVC32']
+      compiler.defines += ['COMPILER_MSVC']
+      if compiler.target.arch == 'x86_64':
+        compiler.defines += ['COMPILER_MSVC64']
+      else:
+        compiler.defines += ['COMPILER_MSVC32']
     else:
       compiler.defines += ['COMPILER_GCC']
 

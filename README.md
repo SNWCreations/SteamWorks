@@ -5,14 +5,14 @@ Exposing SteamWorks functions to SourcePawn.
 
 ## About This Fork
 
-This fork is an attempt to get the SteamWorks extension to compile and run on 64-bit Source engine game servers. The original extension was designed for 32-bit servers, but with the transition to 64-bit servers, several modifications were needed to support the new architecture.
+This fork adds support for both 32-bit and 64-bit Source engine game servers. The original extension was designed for 32-bit only. The default build target is **x86_64** (64-bit). To build for 32-bit, you must explicitly pass `--target x86` to `configure.py` when configuring build.
 
-### Changes Made for 64-bit Support
+### Changes Made
 
-- Updated build configuration to target x86_64 architecture
-- Changed Steam API library paths to use 64-bit versions (linux64, win64)
-- Added Position Independent Code (-fPIC) flag required for 64-bit shared libraries
-- Upgraded C++ standard from C++11 to C++14 for compatibility with newer dependencies
+- Build configuration supports both x86 and x86_64 via `--target` flag
+- Steam API library paths are selected automatically based on target architecture
+- Added Position Independent Code (-fPIC) flag for shared libraries
+- Upgraded C++ standard from C++11 to C++14
 - Fixed pointer casting issues for 64-bit compatibility
 - Added virtual destructors and compiler warning suppressions
 
@@ -41,10 +41,9 @@ To build this extension, you need the following dependencies in the workspace ro
 
 ### Build Commands
 
-#### 64-bit (Linux)
+#### 64-bit (Linux, default)
 ```bash
 python3 configure.py \
-    --target=x86_64 \
     --enable-optimize \
     --hl2sdk-root=/workspace \
     --mms-path=/workspace/mmsource-1.10 \
@@ -71,10 +70,26 @@ cd objdir
 ambuild
 ```
 
+#### Windows
+```bat
+python configure.py -s sdk2013 ^
+    --target x86 ^
+    --hl2sdk-root path\to\sdks ^
+    --sm-path path\to\sourcemod ^
+    --mms-path path\to\metamod-source ^
+    --steamworks-path path\to\steamworks-sdk
+
+cd objdir
+ambuild
+```
+
+Replace `--target x86` with `--target x86_64` for a 64-bit Windows build.
+
 ### Output
 
 The compiled extension will be located at:
 ```
-objdir/package/addons/sourcemod/extensions/SteamWorks.ext.so
+objdir/package/addons/sourcemod/extensions/SteamWorks.ext.so    (Linux)
+objdir/package/addons/sourcemod/extensions/SteamWorks.ext.dll   (Windows)
 ```
 

@@ -26,6 +26,8 @@ void check_thunks(unsigned char *dest, unsigned char *pc)
 {
 #if defined WIN32
 	return;
+#elif defined __x86_64__
+	return;
 #else
 	/* Step write address back 4 to the start of the function address */
 	unsigned char *writeaddr = dest - 4;

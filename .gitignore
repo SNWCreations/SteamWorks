@@ -29,9 +29,11 @@
 
 # Build directories and dependencies
 objdir/
-Extension/
 hl2sdk-*/
 mmsource-*/
 sourcemod-*/
 steamworks-sdk/
 *.zip
+
+assets/
+build/
